@@ -435,14 +435,7 @@
                           <input type="text" name="nombrePareja" value={formData.nombrePareja} onChange={handleInputChange} placeholder="Ej. María Gómez" className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] transition-colors" />
                         </div>
                       </div>
-
-                      <div className="space-y-4 text-left">
-                        <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">¿Asistirás?</label>
-                        <select name="asistencia" value={formData.asistencia} onChange={handleInputChange} className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] cursor-pointer transition-colors">
-                          <option value="si">Confirmar Asistencia</option>
-                          <option value="no">Lamentablemente no podré</option>
-                        </select>
-                      </div>
+                    
                       <div className="space-y-4 text-left">
                         <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D] flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Notas o Alergias</label>
                         <textarea name="alergias" value={formData.alergias} onChange={handleInputChange} rows="3" placeholder="Mensaje para los novios..." className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-3xl px-6 py-5 outline-none font-sans resize-none text-[#2C3E50] transition-colors"></textarea>
