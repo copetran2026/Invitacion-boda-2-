@@ -152,10 +152,12 @@
           const [loading, setLoading] = useState(false);
           const [isPlaying, setIsPlaying] = useState(false);
           const audioRef = useRef(null);
-          const [formData, setFormData] = useState({ nombre: '', asistencia: 'si', acompanante: 'no', alergias: '' });
+          
+          // ESTRUCTURA CORREGIDA: Estado con la separación binaria (Nombre / Pareja)
+          const [formData, setFormData] = useState({ nombre: '', nombrePareja: '', asistencia: 'si', alergias: '' });
 
           const GOOGLE_FORM_URL = "https://docs.google.com/forms/u/0/d/e/TU_ID_DE_FORMULARIO/formResponse";
-          const ENTRY_IDS = { nombre: "entry.1", asistencia: "entry.2", acompanante: "entry.3", alergias: "entry.4" };
+          const ENTRY_IDS = { nombre: "entry.1", nombrePareja: "entry.5", asistencia: "entry.2", alergias: "entry.4" };
 
           useEffect(() => {
             const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -183,8 +185,8 @@
             setLoading(true);
             const googleFormData = new FormData();
             googleFormData.append(ENTRY_IDS.nombre, formData.nombre);
+            googleFormData.append(ENTRY_IDS.nombrePareja, formData.nombrePareja);
             googleFormData.append(ENTRY_IDS.asistencia, formData.asistencia);
-            googleFormData.append(ENTRY_IDS.acompanante, formData.acompanante);
             googleFormData.append(ENTRY_IDS.alergias, formData.alergias);
             try {
               await fetch(GOOGLE_FORM_URL, { method: 'POST', mode: 'no-cors', body: googleFormData });
@@ -248,7 +250,8 @@
               </header>
 
               <section id="prologo" className="relative py-32 px-6 w-full text-center overflow-hidden bg-[#FCEFEF]">
-                <AtmosphericLandscape src="Gemini_Generated_Image_2a2e2w2a2e2w2a2e.png" opacity="opacity-[0.25]" bgColor="from-[#FCEFEF] to-[#FCEFEF]" />
+                {/* CORRECCIÓN: Extensión .jpg en lugar de .png */}
+                <AtmosphericLandscape src="Gemini_Generated_Image_2a2e2w2a2e2w2a2e.jpg" opacity="opacity-[0.25]" bgColor="from-[#FCEFEF] to-[#FCEFEF]" />
                 <GoldenDust />
                 
                 <div className="relative z-10 max-w-4xl mx-auto animate-fade-in-up bg-white/50 backdrop-blur-sm p-10 md:p-16 rounded-[3rem] border border-white/50 shadow-sm">
@@ -374,9 +377,10 @@
                     
                     <div className="relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-2xl">
                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+                       {/* CORRECCIÓN: Extensión .jpg en lugar de .png (o cambia a 'nuevos-anillos.jpg' como decidiste localmente) */}
                        <img 
-                         src="Gemini_Generated_Image_2a2e2w2a2e2w2a2e.png" 
-                         alt="Pareja caminando al atardecer" 
+                         src="Gemini_Generated_Image_2a2e2w2a2e2w2a2e.jpg" 
+                         alt="Detalle de regalo" 
                          className="w-full h-full object-cover transform transition-transform duration-[4000ms] group-hover:scale-110" 
                        />
                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-end p-12">
@@ -394,6 +398,21 @@
                 <AtmosphericLandscape src="https://images.unsplash.com/photo-1494548162494-384bba4ab999?auto=format&fit=crop&q=80&w=2000" opacity="opacity-[0.18]" blend="mix-blend-multiply" bgColor="from-[#FFFDF2] to-[#FFFDF2]" />
                 <BotanicalLineArt style={{ bottom: '0%', right: '-5%', width: '350px', height: '350px' }} rotation={-90} />
               
+                {/* CORRECCIÓN LÓGICA: Se restauró la estructura perdida (divs, título y operador ternario) */}
+                <div className="relative z-10 max-w-4xl mx-auto">
+                  <div className="text-center mb-20">
+                    <span className="text-[#5C768D] font-sans text-[11px] uppercase tracking-[0.4em] font-bold">Confirmación</span>
+                    <h2 className="text-4xl md:text-6xl mt-4 font-light italic text-[#2C3E50]">¿Nos acompañan?</h2>
+                    <p className="text-[#7F8C8D] mt-6 italic">Por favor, confirmen antes del 15 de Julio.</p>
+                  </div>
+
+                  {submitted ? (
+                    <div className="bg-white/80 p-16 rounded-[3rem] text-center border border-[#5C768D]/20 animate-fade-in shadow-inner backdrop-blur-sm">
+                      <CheckCircle className="text-[#5C768D] w-16 h-16 mx-auto mb-8" />
+                      <h3 className="text-3xl mb-4 font-light italic font-serif text-[#2C3E50]">¡Gracias, {formData.nombre}!</h3>
+                      <p className="text-[#7F8C8D] font-sans max-w-sm mx-auto">Tu mensaje ha sido recibido con cariño. Nos vemos muy pronto en Villa de Leyva.</p>
+                      <button onClick={() => setSubmitted(false)} className="mt-12 text-[11px] uppercase tracking-widest font-sans font-bold text-[#5C768D] hover:underline">Enviar otra respuesta</button>
+                    </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="bg-white/70 backdrop-blur-md p-12 md:p-16 rounded-[3.5rem] border border-white/60 shadow-sm space-y-10">
                       
