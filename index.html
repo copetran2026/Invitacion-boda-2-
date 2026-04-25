@@ -410,18 +410,24 @@
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="bg-white/70 backdrop-blur-md p-12 md:p-16 rounded-[3.5rem] border border-white/60 shadow-sm space-y-10">
+                      {/* ESTRUCTURA BINARIA DE NOMBRES: Separación en dos columnas lógicas */}
                       <div className="grid md:grid-cols-2 gap-10">
                         <div className="space-y-4 text-left">
-                          <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">Nombre Completo</label>
-                          <input required type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Tu nombre" className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] transition-colors" />
+                          <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">Tu Nombre Completo</label>
+                          <input required type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Ej. Juan Pérez" className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] transition-colors" />
                         </div>
                         <div className="space-y-4 text-left">
-                          <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">¿Asistirás?</label>
-                          <select name="asistencia" value={formData.asistencia} onChange={handleInputChange} className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] cursor-pointer transition-colors">
-                            <option value="si">Confirmar Asistencia</option>
-                            <option value="no">Lamentablemente no podré</option>
-                          </select>
+                          <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">Nombre de tu pareja <span className="lowercase font-normal opacity-70 tracking-normal">(opcional)</span></label>
+                          <input type="text" name="nombrePareja" value={formData.nombrePareja} onChange={handleInputChange} placeholder="Ej. María Gómez" className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] transition-colors" />
                         </div>
+                      </div>
+
+                      <div className="space-y-4 text-left">
+                        <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">¿Asistirás?</label>
+                        <select name="asistencia" value={formData.asistencia} onChange={handleInputChange} className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] cursor-pointer transition-colors">
+                          <option value="si">Confirmar Asistencia</option>
+                          <option value="no">Lamentablemente no podré</option>
+                        </select>
                       </div>
 
                       {formData.asistencia === 'si' && (
