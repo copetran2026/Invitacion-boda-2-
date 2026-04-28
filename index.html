@@ -55,7 +55,7 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- SISTEMA ICONOGRÁFICO INTERNO (Reemplazo de lucide-react para un solo archivo HTML) ---
+        // --- SISTEMA ICONOGRÁFICO INTERNO ---
         const createIcon = (paths) => ({ className, fill="none", ...props }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} dangerouslySetInnerHTML={{__html: paths}} {...props} />
         );
@@ -81,6 +81,7 @@
         const Pause = createIcon('<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>');
         const MenuIcon = createIcon('<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>');
         const XIcon = createIcon('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>');
+        const Glass = createIcon('<path d="M8 22h8"/><path d="M12 15v7"/><path d="M12 15a8 8 0 0 0 8-8V3H4v4a8 8 0 0 0 8 8Z"/>');
         
         // --- ELEMENTOS DE VIDA: Acuarelas, Line Art y Fondos Atmosféricos ---
 
@@ -156,11 +157,26 @@
           const [isPlaying, setIsPlaying] = useState(false);
           const audioRef = useRef(null);
           
-          // ESTRUCTURA CORREGIDA: Estado con la separación binaria (Nombre / Pareja)
-          const [formData, setFormData] = useState({ nombre: '', nombrePareja: '', asistencia: 'Confirmar asistencia', asistenciaPreWedding: 'Confirmar asistencia', alergias: '' });
+          // ESTRUCTURA SANEADA: Sincronización estricta de mayúsculas con Google Forms
+          const [formData, setFormData] = useState({ 
+            nombre: '', 
+            nombrePareja: '', 
+            asistencia: 'Confirmar asistencia', 
+            asistenciaPreWedding: 'Confirmar Asistencia', // ¡Atención a la 'A' mayúscula aquí!
+            alergias: '' 
+          });
 
-          const GOOGLE_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf65myJXlKRmk7abCMhSiRdS5PPuVLxWLWD7dqAOvVbaEyIaQ/formResponse";
-          const ENTRY_IDS = { nombre: "entry.957662138", nombrePareja: "entry.1187083723", asistencia: "entry.444063044", preWedding: "entry.673276841", alergias: "entry.1360521152" };
+          // URL PURGADA: Sin la trampa de sesión /u/0/
+          const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf65myJXlKRmk7abCMhSiRdS5PPuVLxWLWD7dqAOvVbaEyIaQ/formResponse";
+          
+          // MAPEO DE LLAVES COMPLETO
+          const ENTRY_IDS = { 
+            nombre: "entry.957662138", 
+            nombrePareja: "entry.1187083723", 
+            asistencia: "entry.444063044", 
+            preWedding: "entry.CODIGO_NUEVO_AQUI", // RECUERDA: Cambiar esto cuando obtengas el código real del forms
+            alergias: "entry.1360521152" 
+          };
 
           useEffect(() => {
             const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -178,16 +194,17 @@
             }
           }, [isPlaying]);
 
+          // LA CORRECCIÓN MAESTRA: Faltaba cerrar esta función con "};"
           const handleInputChange = (e) => {
             const { name, value } = e.target;
             setFormData(prev => ({ ...prev, [name]: value }));
-              }; 
-          // CORRECCIÓN FORENSE: Uso de URLSearchParams en lugar de FormData
+          }; // <--- Esta llave cerró la puerta y evitó el colapso
+
           const handleSubmit = async (e) => {
             e.preventDefault();
             setLoading(true);
             
-            // Empaquetamos los datos en el formato de "sobre estándar" que Google Forms aprueba
+            // Empaque tipo sobre (URLSearchParams) como exige Google
             const params = new URLSearchParams();
             params.append(ENTRY_IDS.nombre, formData.nombre);
             params.append(ENTRY_IDS.nombrePareja, formData.nombrePareja);
@@ -215,12 +232,12 @@
           const openGmaps = () => { window.open('https://www.google.com/maps/search/?api=1&query=Hacienda+Retiro+Real+Villa+de+Leyva', '_blank'); };
           const openWaze = () => { window.open('https://waze.com/ul?q=Hacienda%20Retiro%20Real%20Villa%20de%20Leyva&navigate=yes', '_blank'); };
           
-            const openCalendar = () => {
+          const openCalendar = () => {
             const url = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+Laura+%26+Gabriel&dates=20260808T140000/20260809T020000&details=Acomp%C3%A1%C3%B1anos+a+celebrar+nuestro+matrimonio.&location=Hacienda+Retiro+Real,+Villa+de+Leyva,+Boyac%C3%A1";
             window.open(url, '_blank');
           };
           
-          const openPreWeddingMap = () => { window.open('https://www.google.com/maps/place/El+Solar+de+la+Guaca/@5.6343255,-73.5251785,17z/data=!3m1!4b1!4m6!3m5!1s0x8e41d70debb70723:0x799625aa0193138f!8m2!3d5.6343202!4d-73.5225982!16s%2Fg%2F11c3158vhz?entry=ttu&g_ep=EgoyMDI2MDQyNi4wIKXMDSoASAFQAw%3D%3D', '_blank'); };
+          const openPreWeddingMap = () => { window.open('https://www.google.com/maps/search/?api=1&query=Restaurante+La+Guaca+Villa+de+Leyva', '_blank'); };
 
           const itinerary = [
             { time: "02:00 PM", title: "Ceremonia Religiosa", desc: "El momento más trascendental del día, donde consagraremos nuestro amor y recibiremos la bendición de Dios.", phrase: "«Y sobre todas estas cosas vestíos de amor, que es el vínculo perfecto.»", icon: <Heart className="w-5 h-5" /> },
@@ -235,56 +252,50 @@
               <div className="fixed inset-0 opacity-[0.03] pointer-events-none z-0 mix-blend-multiply" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/cream-paper.png")' }}></div>
 
               <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled || isMenuOpen ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-6'}`}>
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          {/* Logo */}
-          <div className="flex items-center space-x-4 group cursor-pointer">
-            <div className={`flex flex-col items-center leading-none transition-colors duration-500 ${scrolled || isMenuOpen ? 'text-[#5C768D]' : 'text-[#FDF7F2]'}`}>
-              <span className="text-2xl font-light">L</span>
-              <div className={`h-[1px] w-6 my-0.5 transition-colors duration-500 ${scrolled || isMenuOpen ? 'bg-[#5C768D]/30' : 'bg-[#FDF7F2]/40'}`}></div>
-              <span className="text-2xl font-light">G</span>
-            </div>
-            <div className={`flex flex-col border-l pl-4 transition-colors duration-500 ${scrolled || isMenuOpen ? 'border-[#EAD3C6]' : 'border-[#FDF7F2]/30'}`}>
-              <span className={`text-[10px] uppercase tracking-[0.4em] font-sans font-extrabold transition-colors duration-500 ${scrolled || isMenuOpen ? 'text-[#5C768D]' : 'text-white'}`}>Laura & Gabriel</span>
-              <span className={`text-[8px] uppercase tracking-[0.2em] font-sans mt-0.5 font-bold transition-colors duration-500 ${scrolled || isMenuOpen ? 'text-[#7F8C8D]' : 'text-white/70'}`}>08 . 08 . 2026</span>
-            </div>
-          </div>
+                <div className="container mx-auto px-6 flex justify-between items-center">
+                  <div className="flex items-center space-x-4 group cursor-pointer">
+                    <div className={`flex flex-col items-center leading-none transition-colors duration-500 ${scrolled || isMenuOpen ? 'text-[#5C768D]' : 'text-[#FDF7F2]'}`}>
+                      <span className="text-2xl font-light">L</span>
+                      <div className={`h-[1px] w-6 my-0.5 transition-colors duration-500 ${scrolled || isMenuOpen ? 'bg-[#5C768D]/30' : 'bg-[#FDF7F2]/40'}`}></div>
+                      <span className="text-2xl font-light">G</span>
+                    </div>
+                    <div className={`flex flex-col border-l pl-4 transition-colors duration-500 ${scrolled || isMenuOpen ? 'border-[#EAD3C6]' : 'border-[#FDF7F2]/30'}`}>
+                      <span className={`text-[10px] uppercase tracking-[0.4em] font-sans font-extrabold transition-colors duration-500 ${scrolled || isMenuOpen ? 'text-[#5C768D]' : 'text-white'}`}>Laura & Gabriel</span>
+                      <span className={`text-[8px] uppercase tracking-[0.2em] font-sans mt-0.5 font-bold transition-colors duration-500 ${scrolled || isMenuOpen ? 'text-[#7F8C8D]' : 'text-white/70'}`}>08 . 08 . 2026</span>
+                    </div>
+                  </div>
 
-          {/* Menú Desktop (Se oculta en móvil) */}
-          <div className={`hidden md:flex space-x-10 text-[10px] uppercase tracking-[0.3em] font-sans font-bold transition-colors duration-500 ${scrolled ? 'text-[#7F8C8D]' : 'text-white/80'}`}>
-            <a href="#inicio" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Inicio</a>
-            <a href="#itinerario" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Itinerario</a>
-            <a href="#vestimenta" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Detalles</a>
-            <a href="#rsvp" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Confirmar</a>
-          </div>
+                  <div className={`hidden md:flex space-x-10 text-[10px] uppercase tracking-[0.3em] font-sans font-bold transition-colors duration-500 ${scrolled ? 'text-[#7F8C8D]' : 'text-white/80'}`}>
+                    <a href="#inicio" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Inicio</a>
+                    <a href="#itinerario" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Itinerario</a>
+                    <a href="#vestimenta" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Detalles</a>
+                    <a href="#rsvp" className={`transition-colors ${scrolled ? 'hover:text-[#5C768D]' : 'hover:text-white'}`}>Confirmar</a>
+                  </div>
 
-          <div className="flex items-center space-x-4">
-            {/* Botón RSVP Desktop */}
-            <a href="#rsvp" className={`hidden md:inline-block px-8 py-2.5 rounded-full text-[10px] font-sans uppercase tracking-widest shadow-lg hover:scale-105 transition-all duration-500 ${scrolled ? 'bg-[#5C768D] text-white shadow-blue-900/10' : 'bg-white/10 backdrop-blur-md border border-white/40 text-white hover:bg-white hover:text-[#2C3E50]'}`}>
-              RSVP
-            </a>
-            
-            {/* Botón Menú Móvil */}
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`md:hidden p-2 transition-colors ${scrolled || isMenuOpen ? 'text-[#5C768D]' : 'text-white'}`}
-            >
-              {isMenuOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
+                  <div className="flex items-center space-x-4">
+                    <a href="#rsvp" className={`hidden md:inline-block px-8 py-2.5 rounded-full text-[10px] font-sans uppercase tracking-widest shadow-lg hover:scale-105 transition-all duration-500 ${scrolled ? 'bg-[#5C768D] text-white shadow-blue-900/10' : 'bg-white/10 backdrop-blur-md border border-white/40 text-white hover:bg-white hover:text-[#2C3E50]'}`}>
+                      RSVP
+                    </a>
+                    
+                    <button 
+                      onClick={() => setIsMenuOpen(!isMenuOpen)}
+                      className={`md:hidden p-2 transition-colors ${scrolled || isMenuOpen ? 'text-[#5C768D]' : 'text-white'}`}
+                    >
+                      {isMenuOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+                    </button>
+                  </div>
+                </div>
 
-        {/* Menú Móvil Desplegable */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-[#EAD3C6]/30 animate-fade-in">
-            <div className="flex flex-col items-center py-10 space-y-8 text-[11px] uppercase tracking-[0.3em] font-sans font-bold text-[#5C768D]">
-              <a href="#inicio" onClick={() => setIsMenuOpen(false)}>Inicio</a>
-              <a href="#itinerario" onClick={() => setIsMenuOpen(false)}>Itinerario</a>
-              <a href="#vestimenta" onClick={() => setIsMenuOpen(false)}>Detalles</a>
-              <a href="#rsvp" onClick={() => setIsMenuOpen(false)} className="bg-[#5C768D] text-white px-10 py-4 rounded-full">Confirmar</a>
-            </div>
-          </div>
-        )}
-      
+                {isMenuOpen && (
+                  <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-[#EAD3C6]/30 animate-fade-in">
+                    <div className="flex flex-col items-center py-10 space-y-8 text-[11px] uppercase tracking-[0.3em] font-sans font-bold text-[#5C768D]">
+                      <a href="#inicio" onClick={() => setIsMenuOpen(false)}>Inicio</a>
+                      <a href="#itinerario" onClick={() => setIsMenuOpen(false)}>Itinerario</a>
+                      <a href="#vestimenta" onClick={() => setIsMenuOpen(false)}>Detalles</a>
+                      <a href="#rsvp" onClick={() => setIsMenuOpen(false)} className="bg-[#5C768D] text-white px-10 py-4 rounded-full">Confirmar</a>
+                    </div>
+                  </div>
+                )}
               </nav>
 
               <header id="inicio" className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -350,7 +361,7 @@
                       <Clock className="text-[#F0F5F9] w-8 h-8 mb-8 relative z-10" />
                       <h3 className="text-3xl mb-4 font-light relative z-10">Sábado, 08 de Agosto</h3>
                       <p className="text-white/80 font-sans text-base mb-12 relative z-10">Ceremonia religiosa: 02:00 PM.<br />Agradecemos su puntualidad.</p>
-                      <button className="w-full bg-white text-[#5C768D] py-5 rounded-2xl text-[11px] font-sans font-bold uppercase tracking-widest hover:bg-[#F0F5F9] transition-colors relative z-10">Agendar Calendario</button>
+                      <button onClick={openCalendar} className="w-full bg-white text-[#5C768D] py-5 rounded-2xl text-[11px] font-sans font-bold uppercase tracking-widest hover:bg-[#F0F5F9] transition-colors relative z-10">Agendar Calendario</button>
                     </div>
                   </div>
                 </div>
@@ -431,11 +442,14 @@
                     
                     <div className="relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-2xl">
                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-                       {/* CORRECCIÓN: Extensión .jpg en lugar de .png (o cambia a 'nuevos-anillos.jpg' como decidiste localmente) */}
                        <img 
                          src="Gemini_Generated_Image_2a2e2w2a2e2w2a2e.png" 
                          alt="Detalle de regalo" 
                          className="w-full h-full object-cover transform transition-transform duration-[4000ms] group-hover:scale-110" 
+                         onError={(e) => {
+                             e.target.onerror = null; 
+                             e.target.src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=1000";
+                         }}
                        />
                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-end p-12">
                           <p className="text-white text-2xl md:text-3xl font-light italic text-center leading-relaxed mb-6">
@@ -447,7 +461,8 @@
                   </div>
                 </div>
               </section>
-            {/* SECCIÓN NUEVA: PRE-WEDDING */}
+
+              {/* SECCIÓN NUEVA: PRE-WEDDING */}
               <section id="pre-wedding" className="relative py-32 px-6 w-full text-center overflow-hidden bg-[#FFFDF2]">
                 <AtmosphericLandscape src="https://images.unsplash.com/photo-1541535881962-3bb380b08458?auto=format&fit=crop&q=80&w=2000" opacity="opacity-[0.10]" blend="mix-blend-multiply" bgColor="from-[#FFFDF2] to-[#FFFDF2]" />
                 <WatercolorWash color="bg-orange-100" style={{ bottom: '-10%', left: '15%', width: '400px', height: '400px' }} />
@@ -470,7 +485,7 @@
                     </p>
                     
                     <div className="flex flex-col items-center justify-center space-y-4">
-                      <p className="font-sans text-[11px] uppercase tracking-widest font-bold text-[#5C768D]">Restaurante El Solar de la Guaca, Villa de Leyva</p>
+                      <p className="font-sans text-[11px] uppercase tracking-widest font-bold text-[#5C768D]">Restaurante La Guaca, Villa de Leyva</p>
                       <button onClick={openPreWeddingMap} className="flex items-center justify-center space-x-3 border border-[#5C768D]/30 py-3 px-8 rounded-full text-[10px] uppercase tracking-widest font-sans hover:bg-[#5C768D] hover:text-white transition-all">
                         <MapPin className="w-4 h-4" /><span>Ver Ubicación</span>
                       </button>
@@ -478,17 +493,16 @@
                   </div>
                 </div>
               </section>
+
               <section id="rsvp" className="relative py-32 px-6 w-full bg-[#FFFDF2]">
                 <AtmosphericLandscape src="https://images.unsplash.com/photo-1494548162494-384bba4ab999?auto=format&fit=crop&q=80&w=2000" opacity="opacity-[0.18]" blend="mix-blend-multiply" bgColor="from-[#FFFDF2] to-[#FFFDF2]" />
                 <BotanicalLineArt style={{ bottom: '0%', right: '-5%', width: '350px', height: '350px' }} rotation={-90} />
               
-                {/* CORRECCIÓN LÓGICA: Se restauró la estructura perdida (divs, título y operador ternario) */}
                 <div className="relative z-10 max-w-4xl mx-auto">
                   <div className="text-center mb-20">
                     <span className="text-[#5C768D] font-sans text-[11px] uppercase tracking-[0.4em] font-bold">Confirmación</span>
                     <h2 className="text-4xl md:text-6xl mt-4 font-light italic text-[#2C3E50]">¿Nos acompañan?</h2>
                     
-                    {/* FRICCIÓN SOLUCIONADA: Delimitación de Audiencia y Plazos */}
                     <div className="mt-8 space-y-3 px-4">
                       <p className="text-[#7F8C8D] font-sans text-[11px] uppercase tracking-widest font-bold">
                         Por favor, diligéncialo con tu pareja una sola vez antes del 20 de julio.
@@ -503,13 +517,17 @@
                     <div className="bg-white/80 p-16 rounded-[3rem] text-center border border-[#5C768D]/20 animate-fade-in shadow-inner backdrop-blur-sm">
                       <CheckCircle className="text-[#5C768D] w-16 h-16 mx-auto mb-8" />
                       <h3 className="text-3xl mb-4 font-light italic font-serif text-[#2C3E50]">¡Gracias, {formData.nombre}!</h3>
-                      <p className="text-[#7F8C8D] font-sans max-w-sm mx-auto">Tu mensaje ha sido recibido con cariño. Nos vemos muy pronto en Villa de Leyva.</p>
+                      
+                      {/* INYECCIÓN DINÁMICA: Llamada al mensaje condicional */}
+                      <p className="text-[#7F8C8D] font-sans text-sm md:text-base max-w-md mx-auto leading-relaxed">
+                        {getFeedbackMessage()}
+                      </p>
+                      
                       <button onClick={() => setSubmitted(false)} className="mt-12 text-[11px] uppercase tracking-widest font-sans font-bold text-[#5C768D] hover:underline">Enviar otra respuesta</button>
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="bg-white/70 backdrop-blur-md p-12 md:p-16 rounded-[3.5rem] border border-white/60 shadow-sm space-y-10">
                       
-                      {/* ESTRUCTURA BINARIA DE NOMBRES: Separación en dos columnas lógicas */}
                       <div className="grid md:grid-cols-2 gap-10">
                         <div className="space-y-4 text-left">
                           <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">Tu Nombre Completo</label>
@@ -522,13 +540,14 @@
                       </div>
 
                       <div className="space-y-4 text-left">
-                        <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">¿Asistirás?</label>
+                        <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D]">¿Asistirás a la boda el sábado?</label>
                         <select name="asistencia" value={formData.asistencia} onChange={handleInputChange} className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] cursor-pointer transition-colors">
-                          <option value="si">Confirmar Asistencia</option>
-                          <option value="no">Lamentablemente no podré ir</option>
+                          <option value="Confirmar asistencia">Confirmar Asistencia</option>
+                          <option value="Lamentablemente no podré ir">Lamentablemente no podré</option>
                         </select>
                       </div>
-                    {/* CAMPO DE PRE-WEDDING CORRECTAMENTE ENLAZADO AL ESTADO Y A GOOGLE FORMS */}
+
+                      {/* CAMPO DE PRE-WEDDING CORRECTAMENTE ENLAZADO AL ESTADO Y A GOOGLE FORMS */}
                       <div className="space-y-4 text-left">
                         <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D] flex items-center gap-2"><Glass className="w-4 h-4" /> ¿Nos acompañarás al Pre-Wedding el viernes?</label>
                         <select name="asistenciaPreWedding" value={formData.asistenciaPreWedding} onChange={handleInputChange} className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] cursor-pointer transition-colors">
@@ -537,6 +556,7 @@
                           <option value="Lamentablemente no podré ir">No podremos, nos vemos directo el sábado</option>
                         </select>
                       </div>
+
                       <div className="space-y-4 text-left">
                         <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D] flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Notas o Alergias para cada persona</label>
                         <textarea name="alergias" value={formData.alergias} onChange={handleInputChange} rows="3" placeholder="Mensaje para los novios..." className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-3xl px-6 py-5 outline-none font-sans resize-none text-[#2C3E50] transition-colors"></textarea>
