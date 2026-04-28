@@ -157,10 +157,10 @@
           const audioRef = useRef(null);
           
           // ESTRUCTURA CORREGIDA: Estado con la separación binaria (Nombre / Pareja)
-          const [formData, setFormData] = useState({ nombre: '', nombrePareja: '', asistencia: 'si', alergias: '' });
+          const [formData, setFormData] = useState({ nombre: '', nombrePareja: '', asistencia: 'Confirmar asistencia', asistenciaPreWedding: 'Confirmar asistencia', alergias: '' });
 
           const GOOGLE_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf65myJXlKRmk7abCMhSiRdS5PPuVLxWLWD7dqAOvVbaEyIaQ/formResponse";
-          const ENTRY_IDS = { nombre: "entry.957662138", nombrePareja: "entry.1187083723", asistencia: "entry.444063044", alergias: "entry.1360521152" };
+          const ENTRY_IDS = { nombre: "entry.957662138", nombrePareja: "entry.1187083723", asistencia: "entry.444063044", preWedding: "entry.673276841", alergias: "entry.1360521152" };
 
           useEffect(() => {
             const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -181,6 +181,7 @@
           const handleInputChange = (e) => {
             const { name, value } = e.target;
             setFormData(prev => ({ ...prev, [name]: value }));
+              }; 
           // CORRECCIÓN FORENSE: Uso de URLSearchParams en lugar de FormData
           const handleSubmit = async (e) => {
             e.preventDefault();
@@ -191,6 +192,7 @@
             params.append(ENTRY_IDS.nombre, formData.nombre);
             params.append(ENTRY_IDS.nombrePareja, formData.nombrePareja);
             params.append(ENTRY_IDS.asistencia, formData.asistencia);
+            params.append(ENTRY_IDS.preWedding, formData.asistenciaPreWedding);
             params.append(ENTRY_IDS.alergias, formData.alergias);
 
             try {
@@ -212,6 +214,13 @@
 
           const openGmaps = () => { window.open('https://www.google.com/maps/search/?api=1&query=Hacienda+Retiro+Real+Villa+de+Leyva', '_blank'); };
           const openWaze = () => { window.open('https://waze.com/ul?q=Hacienda%20Retiro%20Real%20Villa%20de%20Leyva&navigate=yes', '_blank'); };
+          
+            const openCalendar = () => {
+            const url = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+Laura+%26+Gabriel&dates=20260808T140000/20260809T020000&details=Acomp%C3%A1%C3%B1anos+a+celebrar+nuestro+matrimonio.&location=Hacienda+Retiro+Real,+Villa+de+Leyva,+Boyac%C3%A1";
+            window.open(url, '_blank');
+          };
+          
+          const openPreWeddingMap = () => { window.open('https://www.google.com/maps/place/El+Solar+de+la+Guaca/@5.6343255,-73.5251785,17z/data=!3m1!4b1!4m6!3m5!1s0x8e41d70debb70723:0x799625aa0193138f!8m2!3d5.6343202!4d-73.5225982!16s%2Fg%2F11c3158vhz?entry=ttu&g_ep=EgoyMDI2MDQyNi4wIKXMDSoASAFQAw%3D%3D', '_blank'); };
 
           const itinerary = [
             { time: "02:00 PM", title: "Ceremonia Religiosa", desc: "El momento más trascendental del día, donde consagraremos nuestro amor y recibiremos la bendición de Dios.", phrase: "«Y sobre todas estas cosas vestíos de amor, que es el vínculo perfecto.»", icon: <Heart className="w-5 h-5" /> },
@@ -519,7 +528,15 @@
                           <option value="no">Lamentablemente no podré ir</option>
                         </select>
                       </div>
-
+                    {/* CAMPO DE PRE-WEDDING CORRECTAMENTE ENLAZADO AL ESTADO Y A GOOGLE FORMS */}
+                      <div className="space-y-4 text-left">
+                        <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D] flex items-center gap-2"><Glass className="w-4 h-4" /> ¿Nos acompañarás al Pre-Wedding el viernes?</label>
+                        <select name="asistenciaPreWedding" value={formData.asistenciaPreWedding} onChange={handleInputChange} className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-2xl px-6 py-5 outline-none font-sans text-[#2C3E50] cursor-pointer transition-colors">
+                          {/* El value envía el dato estricto, el texto interno muestra la frase amigable */}
+                          <option value="Confirmar Asistencia">Sí, allí estaremos para brindar</option>
+                          <option value="Lamentablemente no podré ir">No podremos, nos vemos directo el sábado</option>
+                        </select>
+                      </div>
                       <div className="space-y-4 text-left">
                         <label className="text-[11px] uppercase tracking-[0.2em] font-sans font-bold text-[#5C768D] flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Notas o Alergias para cada persona</label>
                         <textarea name="alergias" value={formData.alergias} onChange={handleInputChange} rows="3" placeholder="Mensaje para los novios..." className="w-full bg-white/90 border border-transparent focus:border-[#5C768D] rounded-3xl px-6 py-5 outline-none font-sans resize-none text-[#2C3E50] transition-colors"></textarea>
