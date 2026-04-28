@@ -430,7 +430,12 @@
               
                 {/* CORRECCIÓN LÓGICA: Se restauró la estructura perdida (divs, título y operador ternario) */}
                 <div className="relative z-10 max-w-4xl mx-auto">
-                  <div className="mt-8 space-y-3 px-4">
+                  <div className="text-center mb-20">
+                    <span className="text-[#5C768D] font-sans text-[11px] uppercase tracking-[0.4em] font-bold">Confirmación</span>
+                    <h2 className="text-4xl md:text-6xl mt-4 font-light italic text-[#2C3E50]">¿Nos acompañan?</h2>
+                    
+                    {/* FRICCIÓN SOLUCIONADA: Delimitación de Audiencia y Plazos */}
+                    <div className="mt-8 space-y-3 px-4">
                       <p className="text-[#7F8C8D] font-sans text-[11px] uppercase tracking-widest font-bold">
                         Por favor, diligéncialo con tu pareja una sola vez antes del 20 de julio.
                       </p>
@@ -438,6 +443,7 @@
                         "Nos encantan los niños, pero esta celebración será solo para los adultos invitados."
                       </p>
                     </div>
+                  </div>
 
                   {submitted ? (
                     <div className="bg-white/80 p-16 rounded-[3rem] text-center border border-[#5C768D]/20 animate-fade-in shadow-inner backdrop-blur-sm">
